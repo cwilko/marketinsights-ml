@@ -1,4 +1,5 @@
-data
-results
-models/cred
-models/.ipynb_checkpoints
+models/local/cred
+models/local/data
+models/local/.ipynb_checkpoints
+**/.ipynb_checkpoints
+**/cred

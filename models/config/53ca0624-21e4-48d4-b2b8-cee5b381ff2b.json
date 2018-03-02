@@ -1,0 +1,25 @@
+{
+  "model_id": "53ca0624-21e4-48d4-b2b8-cee5b381ff2b",
+  "model_desc": "Boosting+Online+NoWindow",
+  "runtime": "Experiment2-ipynb",
+  "network": {
+    "bias": 0.1,
+    "hidden_units": 32,
+    "weights": {
+      "stdev": 0.1,
+      "seed": null
+    }
+  },
+  "optimizer": {
+    "maxIter": 4000,
+    "minimize_retries": 50,
+    "training_loss_error_case": 0.65
+  },
+  "training": {
+    "lamda": 0.1,
+    "iterations": 20,
+    "threshold": 0,
+    "fixed_training_set_size": false
+  },
+  "debug": false
+}
