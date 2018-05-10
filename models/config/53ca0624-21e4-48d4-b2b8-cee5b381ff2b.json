@@ -1,7 +1,8 @@
 {
   "model_id": "53ca0624-21e4-48d4-b2b8-cee5b381ff2b",
   "model_desc": "Boosting+Online+NoWindow",
-  "runtime": "Experiment2-ipynb",
+  "runtime": "MktDirection (TF-NN-Boosting-Online).ipynb",
+  "cos_bucket": "marketinsights-weights",
   "network": {
     "bias": 0.1,
     "hidden_units": 32,
@@ -12,14 +13,15 @@
   },
   "optimizer": {
     "maxIter": 4000,
-    "minimize_retries": 50,
+    "minimize_iterations": 50,
     "training_loss_error_case": 0.65
   },
   "training": {
-    "lamda": 0.1,
+    "lamda": 0.01,
     "iterations": 20,
     "threshold": 0,
-    "fixed_training_set_size": false
+    "fixed_training_set_size": false,
+    "training_retries": 5
   },
   "debug": false
 }

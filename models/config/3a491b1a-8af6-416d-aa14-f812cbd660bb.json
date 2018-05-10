@@ -1,14 +1,14 @@
 {
-  "model_id": "6682f56b-a2e4-4e6d-92c5-9c11913f8b35",
-  "model_desc": "Bootstrap+Online+NoWindow",
-  "runtime": "MktDirection (TF-NN-Bootstrap-Online).ipynb",
+  "model_id": "3a491b1a-8af6-416d-aa14-f812cbd660bb",
+  "model_desc": "Basic Bootstrap with Fixed Seed (For unittest)",
+  "runtime": "test",
   "cos_bucket": "marketinsights-weights",
   "network": {
     "bias": 0.1,
     "hidden_units": 32,
     "weights": {
       "stdev": 0.1,
-      "seed": null
+      "seed": 42
     }
   },
   "optimizer": {
@@ -17,10 +17,9 @@
     "training_loss_error_case": 0.65
   },
   "training": {
-    "lamda": 0.01,
-    "iterations": 20,
+    "lamda": 0.001,
+    "iterations": 1,
     "threshold": 0,
-    "fixed_training_set_size": false,
     "training_retries": 5
   },
   "debug": false
