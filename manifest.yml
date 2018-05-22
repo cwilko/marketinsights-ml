@@ -1,0 +1,3 @@
+applications: #Reference http://docs.cloudfoundry.com/docs/using/deploying-apps/manifest.html
+- name: marketinsights-model-api #Application Name. Unique to the user's Space
+  memory: 256M #The maximum memory to allocate to each application instance
