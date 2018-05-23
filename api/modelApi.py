@@ -3,7 +3,6 @@ from flask_restplus import Api, Resource, fields, reqparse
 from flask_cors import CORS 
 import os 
 from modelClient import MIModelClient
-from quantutils.api.bluemix import CloudObjectStore
 
 mc = MIModelClient()
 
@@ -33,17 +32,16 @@ parser.add_argument('tz')
 parser.add_argument('index', action='append')
 
 # The ENDPOINT 
-@ns.route('/predict/<model_id>/<pipeline_id>/<mkt1>/<mkt2>') 
+@ns.route('/predict/<model_id>/<training_id>') 
 # the endpoint 
 class MODEL(Resource): 
 
     @api.response(200, "Success", model_input)   
     @api.expect(model_input)
-    def post(self, model_id, pipeline_id, mkt1, mkt2):        
+    def post(self, model_id, training_id):        
         body = parser.parse_args()
-        model_key = CloudObjectStore.generateKey([model_id, pipeline_id, mkt1, mkt2])
         print(body)
-        results = mc.score(model_id, model_key, body)
+        results = mc.score(model_id, training_id, body)
         return jsonify(results) 
 
 #run

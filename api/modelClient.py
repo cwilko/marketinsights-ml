@@ -21,9 +21,12 @@ class MIModelClient():
 
 	models = {}
 
-	def score(self, model_id, model_key, dataset):
-		model = self.getModelInstance(model_id)
-		weights = cos.get_csv(COS_BUCKET, model_key)
+	def score(self, model_id, training_id, dataset):
+
+		if (not cos.keyExists(COS_BUCKET, training_id)):
+			return "Training id does not exist"
+		weights = cos.get_csv(COS_BUCKET, training_id)
+		model = self.getModelInstance(model_id)		
 		index = pd.DatetimeIndex(dataset["index"], tz=pytz.timezone(dataset["tz"]))
 		predictions = self.getPredictions(model, index.astype(np.int64) // 10**9, np.array(dataset["data"]), weights) 
 		return Dataset.csvtojson(pd.DataFrame(predictions, index), dataset["market"], model_id)
