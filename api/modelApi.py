@@ -1,6 +1,7 @@
 from flask import Flask, jsonify 
 from flask_restplus import Api, Resource, fields, reqparse 
 from flask_cors import CORS 
+from flask_sslify import SSLify
 import os 
 from modelClient import MIModelClient
 
@@ -8,6 +9,7 @@ mc = MIModelClient()
 
 # the app 
 app = Flask(__name__) 
+#SSLify(app)
 CORS(app) 
 api = Api(app, version='1.0', title='MarketInsights Model API', validate=False) 
 ns = api.namespace('marketinsights', 'Train, Deploy, and Score models via the MarketInsights API') 
@@ -32,16 +34,16 @@ parser.add_argument('tz')
 parser.add_argument('index', action='append')
 
 # The ENDPOINT 
-@ns.route('/predict/<model_id>/<training_id>') 
+@ns.route('/predict/<training_id>') 
 # the endpoint 
 class MODEL(Resource): 
 
     @api.response(200, "Success", model_input)   
     @api.expect(model_input)
-    def post(self, model_id, training_id):        
+    def post(self, training_id):        
         body = parser.parse_args()
         print(body)
-        results = mc.score(model_id, training_id, body)
+        results = mc.score(training_id, body)
         return jsonify(results) 
 
 #run

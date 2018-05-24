@@ -11,35 +11,35 @@ COS_BUCKET = "marketinsights-weights"
 cos = CloudObjectStore('api/cred/ibm_cos_cred.json')
 mi = MarketInsights('api/cred/MIOapi_cred.json')
 
-# TODO : Pull out of pipeline config?
-##### Specific to the data ##
-NUM_FEATURES = (2 * 4) + 1
-NUM_LABELS = 1
-#############################
-
 class MIModelClient():
 
 	models = {}
 
-	def score(self, model_id, training_id, dataset):
+	def score(self, training_id, dataset):
 
+		training_run = mi.get_training_run(training_id)
+		if (not training_run):
+			return "No Training Id found"
 		if (not cos.keyExists(COS_BUCKET, training_id)):
-			return "Training id does not exist"
+			return "No trained weights found for this training id"
+
+		model_id = training_run["model_id"]
+		_, dataset_desc = mi.get_dataset_by_id(training_run["datasets"][0]) # TODO this is too heavyweight just to get the desc
 		weights = cos.get_csv(COS_BUCKET, training_id)
-		model = self.getModelInstance(model_id)		
+		model = self.getModelInstance(model_id, dataset_desc["features"], dataset_desc["labels"])		
 		index = pd.DatetimeIndex(dataset["index"], tz=pytz.timezone(dataset["tz"]))
 		predictions = self.getPredictions(model, index.astype(np.int64) // 10**9, np.array(dataset["data"]), weights) 
-		return Dataset.csvtojson(pd.DataFrame(predictions, index), dataset["market"], model_id)
+		return Dataset.csvtojson(pd.DataFrame(predictions, index), dataset_desc, dataset["market"])
 
-	def getModelInstance(self, model_id):
+	def getModelInstance(self, model_id, features, labels):
 		if (model_id not in self.models.keys()):
-			self.models[model_id] = self.createModelInstance(model_id)
+			self.models[model_id] = self.createModelInstance(model_id, features, labels)
 		return self.models[model_id]
 
-	def createModelInstance(self, model_id):
+	def createModelInstance(self, model_id, features, labels):
 		model_config = mi.get_model(model_id)
 		# Create ML model
-		return Model(NUM_FEATURES, NUM_LABELS, model_config)
+		return Model(features, labels, model_config)
 
 	# Function to take dates, dataset info for those dates
 	def getPredictions(self, model, timestamps, dataset, weights=None):
@@ -54,7 +54,7 @@ class MIModelClient():
 	    latestPeriods[mask] = [uniqueWPeriods[uniqueWPeriods<=s][-1] for s in timestamps[mask]]
 
 	    # for each non-duplicate timestamp in x, load weights into model for that timestamp
-	    results = np.empty((len(dataset), NUM_LABELS))
+	    results = np.empty((len(dataset), model.NUM_LABELS))
 	    for x in np.unique(latestPeriods):
 	        # run dataset entries matching that timestamp through model, save results against original timestamps
 	        mask = latestPeriods==x
