@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import pytz
+import json
 
 from quantutils.api.bluemix import CloudObjectStore
 from quantutils.api.marketinsights import MarketInsights, Dataset
@@ -29,7 +30,7 @@ class MIModelClient():
 		model = self.getModelInstance(model_id, dataset_desc["features"], dataset_desc["labels"])		
 		index = pd.DatetimeIndex(dataset["index"], tz=pytz.timezone(dataset["tz"]))
 		predictions = self.getPredictions(model, index.astype(np.int64) // 10**9, np.array(dataset["data"]), weights) 
-		return Dataset.csvtojson(pd.DataFrame(predictions, index), dataset_desc, dataset["market"])
+		return json.loads(Dataset.csvtojson(pd.DataFrame(predictions, index), None, None, createId=False))
 
 	def getModelInstance(self, model_id, features, labels):
 		if (model_id not in self.models.keys()):

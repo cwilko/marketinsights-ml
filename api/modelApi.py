@@ -9,7 +9,7 @@ mc = MIModelClient()
 
 # the app 
 app = Flask(__name__) 
-#SSLify(app)
+SSLify(app)
 CORS(app) 
 api = Api(app, version='1.0', title='MarketInsights Model API', validate=False) 
 ns = api.namespace('marketinsights', 'Train, Deploy, and Score models via the MarketInsights API') 
