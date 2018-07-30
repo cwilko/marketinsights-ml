@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 import quantutils.dataset.pipeline as ppl
+from quantutils.api.auth import CredentialsStore
 from quantutils.api.marketinsights import MarketInsights
 from quantutils.api.functions import Functions
 from quantutils.api.assembly import MIAssembly
@@ -29,7 +30,8 @@ COS_BUCKET = "marketinsights-weights"
 NUM_FEATURES = (2 * 4) + 1
 NUM_LABELS = 1
 
-cos = CloudObjectStore('cred/ibm_cos_cred.json')
+cred = CredentialsStore()
+cos = CloudObjectStore(cred)
 
 class MLModelTestCase(unittest.TestCase):
 
@@ -42,8 +44,9 @@ class MLModelTestCase(unittest.TestCase):
 		#
 
 		print("Loading data...")
-		mi = MarketInsights('cred/MIOapi_cred.json')
-		fun = Functions("cred/functions_cred.json")
+		
+		mi = MarketInsights(cred)
+		fun = Functions(cred)
 		self.miassembly = MIAssembly(mi, fun)
 
 		TRAINING_RUN["id"] = cos.generateKey([str(TRAINING_RUN["datasets"]), str(TRAINING_RUN["model_id"])])
@@ -84,8 +87,8 @@ class MLModelTestCase(unittest.TestCase):
 		result = mlutils.evaluate(ppl.onehot(predictions), ppl.onehot(self.test_y), .0)
 
 		print("".join(["Received : ", str(result)]))
-		print("Expected : (0.5116279, 1.0, 0.6769230817760942)")
-		self.assertTrue(np.allclose(result, np.array([0.5116279, 1.0, 0.6769230817760942]))) # Local results
+		print("Expected : (0.48372093, 1.0, 0.6520376159177388)")
+		self.assertTrue(np.allclose(result, np.array([0.48372093, 1.0, 0.6520376159177388]))) # Local results
 
 		##################
 		# Test weights API
@@ -133,8 +136,8 @@ class MLModelTestCase(unittest.TestCase):
 		result = mlutils.evaluate(ppl.onehot(predictions), ppl.onehot(self.test_y), .0)
 
 		print("".join(["Received : ", str(result)]))
-		print("Expected : (0.55581397, 1.0, 0.7144992647562217)")
-		self.assertTrue(np.allclose(result, np.array([0.55581397, 1.0, 0.7144992647562217]))) # Local results
+		print("Expected : (0.49302325, 1.0, 0.6604361287389979)")
+		self.assertTrue(np.allclose(result, np.array([0.49302325, 1.0, 0.6604361287389979]))) # Local results
 
 		##################
 		# Test weights API

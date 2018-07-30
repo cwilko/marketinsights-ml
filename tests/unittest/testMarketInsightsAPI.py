@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import numpy as np
 import quantutils.dataset.pipeline as ppl
+from quantutils.api.auth import CredentialsStore
 from quantutils.api.marketinsights import MarketInsights, Dataset
 from quantutils.api.functions import Functions
 from quantutils.api.assembly import MIAssembly
@@ -10,8 +11,10 @@ from quantutils.api.assembly import MIAssembly
 class APITest(unittest.TestCase):
 
 	def setUp(self):
-		self.mi = MarketInsights('cred/MIOapi_cred.json')
-		fun = Functions("cred/functions_cred.json")
+
+		cred = CredentialsStore()
+		self.mi = MarketInsights(cred)
+		fun = Functions(cred)
 		self.miassembly = MIAssembly(self.mi, fun)
 
 	def testEndToEndPredictionFromDataset(self):
@@ -21,7 +24,7 @@ class APITest(unittest.TestCase):
 
 		results = self.miassembly.get_predictions_with_dataset_id(DATASET_ID, TRAINING_RUN_ID, start="2016-07-01", end="2016-07-15")
 
-		self.assertEqual(np.nansum(results), 4.399551914189942)
+		self.assertEqual(np.nansum(results), 3.14184845914133)
 
 	def testEndToEndPredictionFromRawData(self):
 
@@ -35,17 +38,17 @@ class APITest(unittest.TestCase):
 
 		results = self.miassembly.get_predictions_with_raw_data(data, TRAINING_RUN_ID)
 
-		self.assertEqual(np.nansum(results), 4.399551914189942)
+		self.assertEqual(np.nansum(results), 3.14184845914133)
 
 	@DeprecationWarning
 	def _test_predictions(self):
 		predictions = pd.read_csv('data/testPredictions.csv', index_col=0, parse_dates=True, header=None)
 
 		#Clean up
-		print "Cleaning up"
+		print("Cleaning up")
 		resp = self.mi.delete_predictions("testMkt", "testModelId", debug=False)
 
-		print "Posting predictions"
+		print("Posting predictions")
 		resp = self.mi.put_predictions(predictions, "testMkt", "testModelId", debug=False)
 		self.assertTrue('success' in resp)
 
@@ -58,7 +61,7 @@ class APITest(unittest.TestCase):
 		predictions2.index = predictions.index
 		predictions = predictions2
 
-		print "Updating predictions"
+		print("Updating predictions")
 		resp = self.mi.put_predictions(predictions, "testMkt", "testModelId", update=True)
 		self.assertTrue('success' in resp)
 
@@ -66,7 +69,7 @@ class APITest(unittest.TestCase):
 		self.assertTrue(predictions.index.equals(resp.index))
 		self.assertTrue(np.allclose(predictions.values, resp.values))
 
-		print "Cleaning up"
+		print("Cleaning up")
 		resp = self.mi.delete_predictions("testMkt", "testModelId")
 
 		resp = self.mi.get_predictions("testMkt", "testModelId")

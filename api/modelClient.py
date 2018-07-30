@@ -3,18 +3,21 @@ import pandas as pd
 import pytz
 import json
 
+from quantutils.api.auth import CredentialsStore
 from quantutils.api.bluemix import CloudObjectStore
 from quantutils.api.marketinsights import MarketInsights, Dataset
 from quantutils.model.ml import Model
 
 COS_BUCKET = "marketinsights-weights"
 
-cos = CloudObjectStore('api/cred/ibm_cos_cred.json')
-mi = MarketInsights('api/cred/MIOapi_cred.json')
+cred = CredentialsStore('api/cred')
+cos = CloudObjectStore(cred)
+mi = MarketInsights(cred)
 
 class MIModelClient():
 
-	models = {}
+	modelId = None
+	modelInstance = None
 
 	def score(self, training_id, dataset):
 
@@ -33,9 +36,10 @@ class MIModelClient():
 		return json.loads(Dataset.csvtojson(pd.DataFrame(predictions, index), None, None, createId=False))
 
 	def getModelInstance(self, model_id, features, labels):
-		if (model_id not in self.models.keys()):
-			self.models[model_id] = self.createModelInstance(model_id, features, labels)
-		return self.models[model_id]
+		if (model_id is not self.modelId):
+			self.modelInstance = self.createModelInstance(model_id, features, labels)
+			self.modelId = model_id
+		return self.modelInstance
 
 	def createModelInstance(self, model_id, features, labels):
 		model_config = mi.get_model(model_id)
