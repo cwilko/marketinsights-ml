@@ -15,8 +15,8 @@ from quantutils.model.ml import Model
 
 MODEL_ID = "3a491b1a-8af6-416d-aa14-f812cbd660bb"
 
-DATASET_ID1 = "265e2f7f3e06af1c6fc9e74434514c86" # DOW
-DATASET_ID2 = "c1bcab12dbac8459b5e6f694e6dd22cb" # SPY
+DATASET_ID1 = "4234f0f1b6fcc17f6458696a6cdf5101" # DOW
+DATASET_ID2 = "3231bbe5eb2ab84eb54c9b64a8dcea55" # SPY
 
 TRAINING_RUN = {
         "model_id": MODEL_ID,
@@ -50,6 +50,7 @@ class MLModelTestCase(unittest.TestCase):
 		self.miassembly = MIAssembly(mi, fun)
 
 		TRAINING_RUN["id"] = cos.generateKey([str(TRAINING_RUN["datasets"]), str(TRAINING_RUN["model_id"])])
+		
 		mi.put_training_run(TRAINING_RUN)
 
 		self.CONFIG = mi.get_model(MODEL_ID)	
@@ -87,8 +88,8 @@ class MLModelTestCase(unittest.TestCase):
 		result = mlutils.evaluate(ppl.onehot(predictions), ppl.onehot(self.test_y), .0)
 
 		print("".join(["Received : ", str(result)]))
-		print("Expected : (0.48372093, 1.0, 0.6520376159177388)")
-		self.assertTrue(np.allclose(result, np.array([0.48372093, 1.0, 0.6520376159177388]))) # Local results
+		print("Expected : (0.48139533, 1.0, 0.6499214935472659)")
+		self.assertTrue(np.allclose(result, np.array([0.48139533, 1.0, 0.6499214935472659]))) # Local results
 
 		##################
 		# Test weights API
@@ -136,8 +137,8 @@ class MLModelTestCase(unittest.TestCase):
 		result = mlutils.evaluate(ppl.onehot(predictions), ppl.onehot(self.test_y), .0)
 
 		print("".join(["Received : ", str(result)]))
-		print("Expected : (0.49302325, 1.0, 0.6604361287389979)")
-		self.assertTrue(np.allclose(result, np.array([0.49302325, 1.0, 0.6604361287389979]))) # Local results
+		print("Expected : (0.47674417, 1.0, 0.6456692811685794)")
+		self.assertTrue(np.allclose(result, np.array([0.47674417, 1.0, 0.6456692811685794]))) # Local results
 
 		##################
 		# Test weights API

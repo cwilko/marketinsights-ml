@@ -2,3 +2,5 @@ models/local/data
 api/cred
 models/local/.ipynb_checkpoints
 **/.ipynb_checkpoints
+.pytest_cache/
+__pycache__/
