@@ -20,7 +20,7 @@
     "lamda": 0.01,
     "iterations": 20,
     "threshold": 0,
-    "fixed_training_set_size": true
+    "training_window_size": 1700
   },
   "debug": false
 }

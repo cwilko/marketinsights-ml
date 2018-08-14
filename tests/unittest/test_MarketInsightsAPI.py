@@ -4,10 +4,12 @@ import json
 import pandas as pd
 import numpy as np
 import quantutils.dataset.pipeline as ppl
+import quantutils.model.utils as mlutils
 from quantutils.api.auth import CredentialsStore
 from quantutils.api.marketinsights import MarketInsights, Dataset
 from quantutils.api.functions import Functions
 from quantutils.api.assembly import MIAssembly
+#from quantutils.model.mimodelclient import MIModelClient
 
 root_dir = os.path.dirname(os.path.abspath(__file__)) + "/"
 
@@ -15,9 +17,9 @@ class APITest(unittest.TestCase):
 
 	def setUp(self):
 
-		cred = CredentialsStore()
-		self.mi = MarketInsights(cred)
-		fun = Functions(cred)
+		self.cred = CredentialsStore()
+		self.mi = MarketInsights(self.cred)
+		fun = Functions(self.cred)
 		self.miassembly = MIAssembly(self.mi, fun)
 
 	def testEndToEndPredictionFromDataset(self):
@@ -25,7 +27,11 @@ class APITest(unittest.TestCase):
 		TRAINING_RUN_ID = "94b227b9d7b22c920333aa36d23669c8"
 		DATASET_ID = "4234f0f1b6fcc17f6458696a6cdf5101"
 
+		#mc = MIModelClient(self.cred)
+		#results = self.miassembly.get_local_predictions_with_dataset_id(mc, DATASET_ID, TRAINING_RUN_ID, start="2016-07-01", end="2016-07-15")
+		#results = pd.DataFrame(results["data"], results["index"])
 		results = self.miassembly.get_predictions_with_dataset_id(DATASET_ID, TRAINING_RUN_ID, start="2016-07-01", end="2016-07-15")
+		results = mlutils.aggregatePredictions([results], "mean_all")
 
 		self.assertEqual(np.nansum(results), 3.13416301086545)
 
@@ -40,6 +46,7 @@ class APITest(unittest.TestCase):
 		data.columns = ["Open","High","Low","Close"]
 
 		results = self.miassembly.get_predictions_with_raw_data(data, TRAINING_RUN_ID)
+		results = mlutils.aggregatePredictions([results], "mean_all")
 
 		self.assertEqual(np.nansum(results), 3.13416301086545)
 

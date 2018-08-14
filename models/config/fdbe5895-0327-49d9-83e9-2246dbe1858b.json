@@ -20,7 +20,9 @@
     "lamda": 0.01,
     "iterations": 20,
     "threshold": 0,
-    "fixed_training_set_size": true,
+    "training_window_size": 1716,
+    "training_start_date": "2013-01-01",
+    "training_end_date": "2017-05-18",
     "training_retries": 5
   },
   "debug": false

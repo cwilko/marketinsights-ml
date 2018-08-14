@@ -3,9 +3,10 @@ from flask_restplus import Api, Resource, fields, reqparse
 from flask_cors import CORS 
 from flask_sslify import SSLify
 import os 
-from modelClient import MIModelClient
+from quantutils.model.mimodelclient import MIModelClient
+from quantutils.api.auth import CredentialsStore
 
-mc = MIModelClient()
+mc = MIModelClient(CredentialsStore('api/cred'))
 
 # the app 
 app = Flask(__name__) 

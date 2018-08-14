@@ -53,7 +53,8 @@ class MLModelTestCase(unittest.TestCase):
 		
 		mi.put_training_run(TRAINING_RUN)
 
-		self.CONFIG = mi.get_model(MODEL_ID)	
+		self.CONFIG = mi.get_model(MODEL_ID)
+		TRN_CNF = self.CONFIG["training"]	
 
 		print("Creating model...")
 		# Create ML model
@@ -62,12 +63,17 @@ class MLModelTestCase(unittest.TestCase):
 		mkt1, mkt1_desc = mi.get_dataset_by_id(DATASET_ID1)
 		mkt2, mkt2_desc = mi.get_dataset_by_id(DATASET_ID2)
 
+		# Crop training dates
+		if "training_end_date" in TRN_CNF:
+		    mkt1 = mkt1[TRN_CNF["training_start_date"]:TRN_CNF["training_end_date"]]
+		    mkt2 = mkt2[TRN_CNF["training_start_date"]:TRN_CNF["training_end_date"]]
+
 		# Interleave (part of the "added insight" for this model)
 		self.mkt1, self.mkt2, self.isect = ppl.intersect(mkt1,mkt2)
 		self.dataset = ppl.interleave(self.mkt1,self.mkt2)
 
-		self.TEST_SET_SIZE = 430
-		self.TRAINING_SET_SIZE = len(self.dataset) - self.TEST_SET_SIZE
+		self.TRAINING_SET_SIZE = TRN_CNF["training_window_size"]
+		self.TEST_SET_SIZE = len(self.dataset) - self.TRAINING_SET_SIZE
 		self.WINDOW_SIZE = self.TRAINING_SET_SIZE
 
 		_ , self.test_y = ppl.splitCol(self.dataset[self.TRAINING_SET_SIZE:], NUM_FEATURES)
@@ -83,13 +89,14 @@ class MLModelTestCase(unittest.TestCase):
 		TRN_CNF = self.CONFIG['training']
 		print("Training", end='')
 		
-		results = mlutils.bootstrapTrain(self.ffnn, self.dataset[:self.TRAINING_SET_SIZE], self.dataset[self.TRAINING_SET_SIZE:], TRN_CNF['lamda'], TRN_CNF['iterations'], TRN_CNF['threshold'], True)
+		results = mlutils.bootstrapTrain(self.ffnn, self.dataset[:self.TRAINING_SET_SIZE], self.dataset[self.TRAINING_SET_SIZE:], TRN_CNF['lamda'], TRN_CNF['iterations'], TRN_CNF['threshold'], False)
 		predictions =  np.nanmean(results["test_predictions"], axis=0)
 		result = mlutils.evaluate(ppl.onehot(predictions), ppl.onehot(self.test_y), .0)
-
+		print(result)
+		
 		print("".join(["Received : ", str(result)]))
-		print("Expected : (0.48139533, 1.0, 0.6499214935472659)")
-		self.assertTrue(np.allclose(result, np.array([0.48139533, 1.0, 0.6499214935472659]))) # Local results
+		print("Expected : 0.48139533")
+		self.assertTrue(np.allclose(result, 0.48139533)) # Local results
 
 		##################
 		# Test weights API
@@ -132,13 +139,13 @@ class MLModelTestCase(unittest.TestCase):
 		TRN_CNF = self.CONFIG['training']
 		print("Training", end='')
 		
-		results = mlutils.boostingTrain(self.ffnn, self.dataset[:self.TRAINING_SET_SIZE], self.dataset[self.TRAINING_SET_SIZE:], TRN_CNF['lamda'], TRN_CNF['iterations'], True)
+		results = mlutils.boostingTrain(self.ffnn, self.dataset[:self.TRAINING_SET_SIZE], self.dataset[self.TRAINING_SET_SIZE:], TRN_CNF['lamda'], TRN_CNF['iterations'], False)
 		predictions =  np.nanmean(results["test_predictions"], axis=0)
 		result = mlutils.evaluate(ppl.onehot(predictions), ppl.onehot(self.test_y), .0)
 
 		print("".join(["Received : ", str(result)]))
-		print("Expected : (0.47674417, 1.0, 0.6456692811685794)")
-		self.assertTrue(np.allclose(result, np.array([0.47674417, 1.0, 0.6456692811685794]))) # Local results
+		print("Expected : 0.47674417")
+		self.assertTrue(np.allclose(result, 0.47674417)) # Local results
 
 		##################
 		# Test weights API
