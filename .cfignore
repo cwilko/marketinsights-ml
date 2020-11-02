@@ -1,2 +1,4 @@
 models
 tests
+build
+.pytest_cache

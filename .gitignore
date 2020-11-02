@@ -4,3 +4,4 @@ models/local/.ipynb_checkpoints
 **/.ipynb_checkpoints
 .pytest_cache/
 __pycache__/
+build
