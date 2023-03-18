@@ -1,7 +1,12 @@
-models/local/data
-api/cred
-models/local/.ipynb_checkpoints
-**/.ipynb_checkpoints
+*.py[cod]
+.ipynb_checkpoints/
+test/.~lock*
 .pytest_cache/
 __pycache__/
-build
+test/data
+.cache/
+**/test-reports
+**/*egg-info
+*.hdf
+*.pkl
+build/
