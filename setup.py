@@ -33,7 +33,7 @@ setup(
     install_requires=requirements,
 
     extras_require={
-        'server': ['Flask>=2.2.3', 'Flask-Cors>=3.0.10', 'flask-restx>=1.1.0', 'Flask-SSLify>=0.1.5']
+        'server': ['Flask>=2.2.3', 'Flask-Cors>=3.0.10', 'flask-restx>=1.1.0', 'Flask-SSLify>=0.1.5', 'marketinsights-remote @ git+https://github.com/cwilko/marketinsights-remote.git']
 
         # Successfully installed Flask-2.2.3 Werkzeug-2.2.3 aniso8601-9.0.1
         # click-8.1.3 Flask-Cors-3.0.10 Flask-SSLify-0.1.5 flask-restx-1.1.0
