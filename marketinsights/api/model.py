@@ -1,4 +1,5 @@
 import tensorflow as tf
+import importlib
 
 
 class MarketInsightsModel(tf.Module):
@@ -15,3 +16,10 @@ class MarketInsightsModel(tf.Module):
 
     def getSignatures(self):
         signatures = self.__call__.get_concrete_function(tf.TensorSpec([None], tf.float32))
+
+    @staticmethod
+    def createInstance(modelClass, modelModule="marketinsights.model", opts={}):
+        module = importlib.import_module(modelModule)
+        modelInstance = getattr(module, modelClass)
+        model = modelInstance(**opts)
+        return model

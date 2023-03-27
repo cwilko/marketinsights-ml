@@ -7,27 +7,27 @@ from marketinsights.api.model import MarketInsightsModel
 
 class Perceptron(MarketInsightsModel):
 
-    def __init__(self, name, NUM_FEATURES, NUM_LABELS, CONFIG):
+    def __init__(self, name, featureCount, labelCount, modelConfig):
         super().__init__(name)
 
-        self.OPT_CNF = CONFIG['optimizer']
-        self.NTWK_CNF = CONFIG['network']
-        self.TRAIN_CNF = CONFIG['training']
+        self.OPT_CNF = modelConfig['optimizer']
+        self.NTWK_CNF = modelConfig['network']
+        self.TRAIN_CNF = modelConfig['training']
 
         HIDDEN_UNITS = self.NTWK_CNF["hidden_units"]
         BIAS = self.NTWK_CNF["bias"]
         STDEV = self.NTWK_CNF["weights"]["stdev"]
         SEED = self.NTWK_CNF["weights"]["seed"]
 
-        self.NUM_FEATURES = NUM_FEATURES
-        self.NUM_LABELS = NUM_LABELS
+        self.NUM_FEATURES = featureCount
+        self.NUM_LABELS = labelCount
 
         self.losses = []
 
         # Initialize model parameters
-        self.Theta1 = tf.Variable(tf.random.normal([HIDDEN_UNITS, NUM_FEATURES], stddev=STDEV, seed=SEED, dtype=tf.float32))
-        self.Theta2 = tf.Variable(tf.random.normal([NUM_LABELS, HIDDEN_UNITS], stddev=STDEV, seed=SEED, dtype=tf.float32))
-        self.bias = tf.Variable(tf.constant(BIAS, shape=[NUM_LABELS], dtype=tf.float32))
+        self.Theta1 = tf.Variable(tf.random.normal([HIDDEN_UNITS, self.NUM_FEATURES], stddev=STDEV, seed=SEED, dtype=tf.float32))
+        self.Theta2 = tf.Variable(tf.random.normal([self.NUM_LABELS, HIDDEN_UNITS], stddev=STDEV, seed=SEED, dtype=tf.float32))
+        self.bias = tf.Variable(tf.constant(BIAS, shape=[self.NUM_LABELS], dtype=tf.float32))
         self.lam = tf.constant(0.001, tf.float32)
 
     @tf.function(input_signature=[tf.TensorSpec([None, None], tf.float32)])
