@@ -10,3 +10,6 @@ test/data
 *.hdf
 *.pkl
 build/
+cert
+config/modelserver
+samples

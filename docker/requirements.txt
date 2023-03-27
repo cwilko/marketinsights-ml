@@ -1,1 +1,0 @@
-marketinsights-ml[server] @ git+https://github.com/cwilko/marketinsights-ml.git
