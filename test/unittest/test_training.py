@@ -42,7 +42,7 @@ class MLModelTestCase(unittest.TestCase):
         self.modelsvr = MIModelServer(
             serverConfigPath=root_dir + "../../config/modelserver/model_config.json",
             secret="marketinsights-k8s-cred")
-        mi = MIAssembly(modelSvr=self.modelsvr)
+        mi = MIAssembly(modelSvr=self.modelsvr, secret="marketinsights-k8s-cred")
 
         self.CONFIG = mi.get_model(MODEL_ID)
         TRN_CNF = self.CONFIG["training"]

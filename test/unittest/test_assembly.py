@@ -19,7 +19,7 @@ class APITest(unittest.TestCase):
     def setUp(self):
 
         self.modelsvr = MIModelServer(secret="marketinsights-k8s-cred")
-        self.assembly = MIAssembly(modelSvr=self.modelsvr)
+        self.assembly = MIAssembly(modelSvr=self.modelsvr, secret="marketinsights-k8s-cred")
 
     def testEndToEndPredictionFromDataset(self):
 
